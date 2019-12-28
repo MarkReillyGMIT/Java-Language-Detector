@@ -1,0 +1,13 @@
+package ie.gmit.sw;
+
+import java.io.IOException;
+
+public class Runner {
+
+	public static void main(String[] args) throws IOException, InterruptedException {
+		// TODO Auto-generated method stub
+		new Menu().showMenu();
+
+	}
+
+}
