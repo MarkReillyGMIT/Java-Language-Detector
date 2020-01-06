@@ -8,22 +8,37 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class <i>Parser</i> reads the user input into ngram's for the dataset and the
+ * text file, reads each file line by line. Implements <code>Runnable</code>.
+ * 
+ * @author Mark Reilly
+ *
+ */
 public class Parser implements Runnable {
 	private String fileName;
 	private String queryFile;
 	private int k;
 	private Database db = null;
 
+	public Parser() {
+		
+	}
 	public Parser(String fileName, int k, String queryFile) {
 		this.fileName = fileName;
 		this.k = k;
-		this.queryFile=queryFile;
+		this.queryFile = queryFile;
 	}
 
 	public void setDb(Database db) {
 		this.db = db;
 	}
 
+	/**
+	 * Reads in file for the text input, iterates through each line of the text file
+	 * Splits the line into two records when it comes across an <b>@</b> symbol.
+	 * Calls method parse() and passes it two records. Reads in query file.
+	 */
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -48,27 +63,17 @@ public class Parser implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(queryFile)));
-			String line;
-			while ((line = br.readLine()) != null) {
-				//System.out.println(line.replaceAll("\\s+",""));
-				line.replaceAll("\\s+","+");
-				System.out.println(line);
-				//fileParser(line);
-			}
-		} catch (FileNotFoundException e) {
-			System.out.println("File not found");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 	}
 
-	
-	
+	/**
+	 * Parse's each line of the dataset into n-grams depending on the size of
+	 * <code>k</code>. Calls the method add() in the class <i>Database</i> and
+	 * passes it all the n-grams of the specified language.
+	 * 
+	 * @param text
+	 * @param lang
+	 * @param ks
+	 */
 	private void parse(String text, String lang, int... ks) {
 		// TODO Auto-generated method stub
 		Language language = Language.valueOf(lang);
@@ -79,12 +84,25 @@ public class Parser implements Runnable {
 		}
 
 	}
-	
-	public void fileParser(String text) {
-		Map<Integer, LanguageEntry> textQueryMap = new HashMap<>();
 
-		for (int i = 0; i <= text.length() - k; i++) {
-			CharSequence ngram = text.substring(i, i + k);
+	/**
+	 * Read's each line in the text file. Passes <code>String queryFile</code> to the for loop.
+	 * Parse's each line into n-grams of size <code>k</code> converts the n-gram to
+	 * hashCode, if <code>textQueryMap</code> contains the ngram increment
+	 * frequency. Add new values to the <code>textQueryMap</code>.Output the 
+	 * result at the end.
+	 * 
+	 * @param textFile
+	 */
+	public void fileParser(String textFile) throws IOException {
+		String queryFile;
+		Map<Integer, LanguageEntry> textQueryMap = new HashMap<>();
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(textFile)));
+		
+		while((queryFile = br.readLine()) !=null){
+			
+		for (int i = 0; i <= queryFile.length() - k; i++) {
+			CharSequence ngram = queryFile.substring(i, i + k);
 			int kmerHash = ngram.hashCode();
 
 			int frequency = 1;
@@ -95,13 +113,14 @@ public class Parser implements Runnable {
 			textQueryMap.put(kmerHash, new LanguageEntry(kmerHash, frequency));
 		}
 
-		System.out.println(db.getLanguage(textQueryMap));
-
+	}
+		Language language = db.getLanguage(textQueryMap);
+		 System.out.println("The text appears to be written in " + language);
+		 br.close();
 	}
 
-
-		/* 
-		 * wili-2018-Small-11750-Edited.txt
-		 * */
-
+	/*
+	 * wili-2018-Small-11750-Edited.txt
+	 * 
+	 */
 }

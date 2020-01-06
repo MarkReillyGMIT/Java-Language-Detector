@@ -1,5 +1,10 @@
 package ie.gmit.sw;
 
+/**
+ * Class <i>Language</i> contains all the names of the languages in the Dataset.
+ * @author Mark Reilly
+ *
+ */
 public enum Language {
 	Achinese ("Achinese"),
 	Afrikaans ("Afrikaans"),
@@ -238,11 +243,18 @@ public enum Language {
 	Zeeuws ("Zeeuws");
 	
 	private final CharSequence language;
-
+	
+	/**
+	 * 
+	 * @param language
+	 */
     private Language(CharSequence language) {
         this.language = language;
     }
-	
+	/**
+	 * 
+	 * @return the Language
+	 */
     public CharSequence getLanguageName() {
         return this.language;
     }

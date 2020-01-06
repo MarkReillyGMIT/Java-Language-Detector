@@ -1,12 +1,24 @@
 package ie.gmit.sw;
 
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.stream.Collectors;
 
+/**
+ * Class <i>Database</i> contains methods for creating Maps for each language
+ * and calculating the right Language of the input text file.
+ * 
+ * @author Mark Reilly
+ *
+ */
 public class Database {
 	private Map<Language, Map<Integer, LanguageEntry>> db = new TreeMap<>();
-	
+
+	/**
+	 * Adds an ngram from the input dataset to a map <code>langDb</code>.
+	 * 
+	 * @param s    is convert to hashcode, to reduce memory.Passed from
+	 *             class<i>Parser</i>
+	 * @param lang list of languages.
+	 */
 	public void add(CharSequence s, Language lang) {
 		int kmer = s.hashCode();
 		Map<Integer, LanguageEntry> langDb = getLanguageEntries(lang);
@@ -19,6 +31,14 @@ public class Database {
 
 	}
 
+	/**
+	 * Checks the treeMap <b>db</b> to see if it contains the <code>lang</code> from
+	 * class <i>Language</i> if it does, return <code>langDb</code> else create new
+	 * treeMap and add the <code>lang</code> to the <b>db</b>
+	 * 
+	 * @param lang
+	 * @return langDb with language.
+	 */
 	private Map<Integer, LanguageEntry> getLanguageEntries(Language lang) {
 		Map<Integer, LanguageEntry> langDb = null;
 		if (db.containsKey(lang)) {
@@ -30,9 +50,13 @@ public class Database {
 		return langDb;
 	}
 
-	// Retain only the top n-grams
+	/**
+	 * Adds the top <code> max </code> amount of n-grams for each language to
+	 * <b>db</b>
+	 * 
+	 * @param max equals the value of the top n-grams to add to the <b>db</b>
+	 */
 	public void resize(int max) {
-		System.out.println("in resize() ");
 		Set<Language> keys = db.keySet();
 		for (Language lang : keys) {
 			Map<Integer, LanguageEntry> top = getTop(max, lang);
@@ -40,8 +64,16 @@ public class Database {
 		}
 	}
 
-
 	// Sort Language Map in ascending order
+	/**
+	 * Sorts the Language Map in ascending order. Gives each n-gram a rank based on
+	 * their frequency. Get's the top <code>max</code> amount of n-grams for each
+	 * language.
+	 * 
+	 * @param max
+	 * @param lang
+	 * @return
+	 */
 	public Map<Integer, LanguageEntry> getTop(int max, Language lang) {
 		Map<Integer, LanguageEntry> temp = new TreeMap<>();
 		List<LanguageEntry> les = new ArrayList<>(db.get(lang).values());
@@ -58,6 +90,11 @@ public class Database {
 		return temp;
 	}
 
+	/**
+	 * 
+	 * @param query
+	 * @return
+	 */
 	public Language getLanguage(Map<Integer, LanguageEntry> query) {
 		TreeSet<OutOfPlaceMetric> oopm = new TreeSet<>();
 
@@ -79,10 +116,15 @@ public class Database {
 				distance += s.getRank() - q.getRank();
 			}
 		}
-		System.out.println(distance);
 		return distance;
 	}
 
+	/**
+	 * Show's the distance between the language and the query.
+	 * Implements <code>comparable</code>
+	 * @author Mark Reilly
+	 *
+	 */
 	private class OutOfPlaceMetric implements Comparable<OutOfPlaceMetric> {
 		private Language lang;
 		private int distance;

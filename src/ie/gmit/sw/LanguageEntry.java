@@ -1,5 +1,10 @@
 package ie.gmit.sw;
-
+/**
+ * Class <i>LanguageEntry</i> stores variables and implements 
+ * <code>Comparable</code>.
+ * @author Mark Reilly
+ *
+ */
 public class LanguageEntry implements Comparable<LanguageEntry> {
 	private int kmer;
 	private int frequency;
@@ -34,7 +39,10 @@ public class LanguageEntry implements Comparable<LanguageEntry> {
 	public void setRank(int rank) {
 		this.rank = rank;
 	}
-
+	/**
+	 * Compare's one LanguageEntry to another, they get compared by frequency.
+	 * Do so be most frequently occurring first.
+	 */
 	@Override
 	public int compareTo(LanguageEntry next) {
 		return - Integer.compare(frequency, next.getFrequency());
